@@ -8845,6 +8845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _walkSpeed: 0
+  _input: {fileID: 1419984753}
 --- !u!1 &6698442932317760401
 GameObject:
   m_ObjectHideFlags: 0
