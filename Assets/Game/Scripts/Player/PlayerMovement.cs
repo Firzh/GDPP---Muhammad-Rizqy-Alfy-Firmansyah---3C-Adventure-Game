@@ -8,13 +8,22 @@ public class PlayerMovement : MonoBehaviour
     private float _walkSpeed;
     [SerializeField]
     private float _sprintSpeed;
-	[SerializeField]
+    [SerializeField]
     private float _walkSprintTransition;
     [SerializeField]
     private InputManager _input;
     [SerializeField]
+    private float _jumpForce;
+    [SerializeField]
+    private Transform _groundDetector;
+    [SerializeField]
+    private float _detectorRadius;
+    [SerializeField]
+    private LayerMask _groundLayer;
+    [SerializeField]
     private float _rotationSmoothTime = 0.1f;
     private float _rotationSmoothVelocity;
+    private bool _isGrounded;
 
     private Rigidbody _rigidbody;
 
@@ -28,12 +37,19 @@ public class PlayerMovement : MonoBehaviour
     {
         _input.OnMoveInput += Move;
         _input.OnSprintInput += Sprint;
+        _input.OnJumpInput += Jump;
+    }
+
+    private void Update()
+    {
+        CheckIsGrounded();
     }
 
     private void OnDestroy()
     {
         _input.OnMoveInput -= Move;
         _input.OnSprintInput -= Sprint;
+        _input.OnJumpInput -= Jump;
     }
 
     private void Move(Vector2 axisDirection)
@@ -58,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 _speed = _speed + _walkSprintTransition * Time.deltaTime;
             }
-            Debug.Log("Sprinting");
+            // Debug.Log("Sprinting");
         }
         else
         {
@@ -66,7 +82,22 @@ public class PlayerMovement : MonoBehaviour
             {
                 _speed = _speed - _walkSprintTransition * Time.deltaTime;
             }
-            Debug.Log("Walking");
+            // Debug.Log("Walking");
         }
+    }
+
+    private void Jump()
+    {
+        if (_isGrounded)
+        {
+            Vector3 jumppDirection = Vector3.up;
+            _rigidbody.AddForce(jumppDirection * _jumpForce * Time.deltaTime);
+        }
+    }
+
+    private void CheckIsGrounded()
+    {
+        _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
+        // Debug.Log("Player hit the ground");
     }
 }

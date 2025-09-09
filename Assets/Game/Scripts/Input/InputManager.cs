@@ -7,6 +7,7 @@ public class InputManager : MonoBehaviour
 {
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnSprintInput;
+    public Action OnJumpInput;
 
     private void Update()
     {
@@ -52,7 +53,11 @@ public class InputManager : MonoBehaviour
         bool isPressJumpInput = Input.GetKeyDown(KeyCode.Space);
         if (isPressJumpInput)
         {
-            Debug.Log("Jump");
+            if (OnJumpInput != null)
+            {
+                OnJumpInput();
+                // Debug.Log("Jump");
+            }
         }
     }
 
@@ -64,7 +69,7 @@ public class InputManager : MonoBehaviour
             if (OnSprintInput != null)
             {
                 OnSprintInput(true);
-                Debug.Log("Sprint On");
+                // Debug.Log("Sprint On");
             }
         }
         else
@@ -72,7 +77,7 @@ public class InputManager : MonoBehaviour
             if (OnSprintInput != null)
             {
                 OnSprintInput(false);
-                Debug.Log("Sprint Off");
+                // Debug.Log("Sprint Off");
             }
         }
     }
