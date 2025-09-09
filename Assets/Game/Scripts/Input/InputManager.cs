@@ -1,15 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class InputManager : MonoBehaviour
 {
+    public Action<Vector2> OnMoveInput;
 
     private void Update()
     {
         // Panggil metode pergerakan yang baru
         CheckMovementInput();
-        
+
         // Panggil metode pengecekan input lainnya
         CheckJumpInput();
         CheckSprintInput();
@@ -21,24 +23,27 @@ public class InputManager : MonoBehaviour
         CheckPunchInput();
         CheckEscapeInput();
     }
-    
+
     // Metode baru untuk pergerakan menggunakan GetAxis()
     private void CheckMovementInput()
     {
-        float horizontalInput = Input.GetAxis("Horizontal"); // Nilai -1 (kiri/A) hingga 1 (kanan/D)
-        float verticalInput = Input.GetAxis("Vertical");     // Nilai -1 (bawah/S) hingga 1 (atas/W)
+        float horizontalAxis = Input.GetAxis("Horizontal");
+        float verticalAxis = Input.GetAxis("Vertical");
 
-        if (horizontalInput != 0 || verticalInput != 0)
+        if (horizontalAxis != 0 || verticalAxis != 0)
         {
-            // Vektor 3 ini bisa langsung digunakan untuk menggerakkan karakter
-            Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
-            
-            // Contoh sederhana untuk melihat nilai input
-            Debug.Log("Horizontal Axis: " + horizontalInput);
-            Debug.Log("Vertical Axis: " + verticalInput);
+            // Buat Vector2 dari input dan panggil action
+            Vector2 inputAxis = new Vector2(horizontalAxis, verticalAxis);
+            OnMoveInput?.Invoke(inputAxis);
+
+            // sama dengan 
+            // if (OnMoveInput != null)
+            // {
+            //     OnMoveInput.Invoke(inputAxis);
+            // }
         }
     }
-    
+
     // --- Metode Aksi Lainnya (tetap sama) ---
 
     private void CheckJumpInput()
