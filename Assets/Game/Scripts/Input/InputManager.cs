@@ -6,6 +6,7 @@ using System;
 public class InputManager : MonoBehaviour
 {
     public Action<Vector2> OnMoveInput;
+    public Action<bool> OnSprintInput;
 
     private void Update()
     {
@@ -57,10 +58,22 @@ public class InputManager : MonoBehaviour
 
     private void CheckSprintInput()
     {
-        bool isPressSprint = Input.GetKey(KeyCode.LeftShift);
-        if (isPressSprint)
+        bool isHoldSprintInput = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (isHoldSprintInput)
         {
-            Debug.Log("Lari");
+            if (OnSprintInput != null)
+            {
+                OnSprintInput(true);
+                Debug.Log("Sprint On");
+            }
+        }
+        else
+        {
+            if (OnSprintInput != null)
+            {
+                OnSprintInput(false);
+                Debug.Log("Sprint Off");
+            }
         }
     }
 

@@ -8847,7 +8847,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _walkSpeed: 400
+  _sprintSpeed: 1000
+  _walkSprintTransition: 4
   _input: {fileID: 1419984753}
+  _rotationSmoothTime: 0.1
 --- !u!54 &6584133149761077893
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8857,7 +8860,7 @@ Rigidbody:
   m_GameObject: {fileID: 5770336647351785529}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 0.75
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
