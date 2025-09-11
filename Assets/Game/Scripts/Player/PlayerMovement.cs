@@ -20,6 +20,13 @@ public class PlayerMovement : MonoBehaviour
     private float _detectorRadius;
     [SerializeField]
     private LayerMask _groundLayer;
+
+    [SerializeField]
+    private Vector3 _upperStepOffset;
+    [SerializeField]
+    private float _stepCheckerDistance;
+    [SerializeField]
+    private float _stepForce;
     [SerializeField]
     private float _rotationSmoothTime = 0.1f;
     private float _rotationSmoothVelocity;
@@ -43,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         CheckIsGrounded();
+        CheckStep();
     }
 
     private void OnDestroy()
@@ -99,5 +107,15 @@ public class PlayerMovement : MonoBehaviour
     {
         _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
         // Debug.Log("Player hit the ground");
+    }
+    private void CheckStep()
+    {
+        bool isHitLowerStep = Physics.Raycast(_groundDetector.position, transform.forward, _stepCheckerDistance);
+        bool isHitUpperStep = Physics.Raycast(_groundDetector.position + _upperStepOffset, transform.forward, _stepCheckerDistance);
+        if (isHitLowerStep && !isHitUpperStep)
+        {
+            _rigidbody.AddForce(0, _stepForce * Time.deltaTime, 0);
+            Debug.Log("Upper force applied");
+        }
     }
 }
