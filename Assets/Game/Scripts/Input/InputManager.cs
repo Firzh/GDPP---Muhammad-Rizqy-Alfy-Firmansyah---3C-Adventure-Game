@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnSprintInput;
     public Action OnJumpInput;
+    public Action OnClimbInput;
+    public Action OnCancelClimb;
 
     private void Update()
     {
@@ -102,10 +104,11 @@ public class InputManager : MonoBehaviour
 
     private void CheckClimbInput()
     {
-        bool isPressClimb = Input.GetKeyDown(KeyCode.E);
-        if (isPressClimb)
+        bool isPressClimbInput = Input.GetKeyDown(KeyCode.E);
+        if (isPressClimbInput)
         {
-            Debug.Log("Memanjat");
+            OnClimbInput();
+            // Debug.Log("Memanjat");
         }
     }
 
@@ -120,10 +123,11 @@ public class InputManager : MonoBehaviour
 
     private void CheckCancelInput()
     {
-        bool isPressCancel = Input.GetKeyDown(KeyCode.C);
-        if (isPressCancel)
+        bool isPressCancelInput = Input.GetKeyDown(KeyCode.C);
+        if (isPressCancelInput)
         {
-            Debug.Log("Membatalkan aksi");
+            OnCancelClimb();
+            // Debug.Log("Membatalkan aksi");
         }
     }
 
