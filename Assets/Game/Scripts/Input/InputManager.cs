@@ -1,6 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
+// using System.Collections.Generic;
+// using System.Collections;
 using System;
 
 public class InputManager : MonoBehaviour
@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     public Action OnJumpInput;
     public Action OnClimbInput;
     public Action OnCancelClimb;
+    public Action OnChangePoV;
 
     private void Update()
     {
@@ -20,7 +21,7 @@ public class InputManager : MonoBehaviour
         CheckJumpInput();
         CheckSprintInput();
         CheckCrouchInput();
-        CheckCameraChangeInput();
+        CheckChangePoVInput();
         CheckClimbInput();
         CheckGlideInput();
         CheckCancelInput();
@@ -93,11 +94,12 @@ public class InputManager : MonoBehaviour
         }
     }
     
-    private void CheckCameraChangeInput()
+    private void CheckChangePoVInput()
     {
-        bool isPressCameraChange = Input.GetKeyDown(KeyCode.Q);
-        if (isPressCameraChange)
+        bool isPressChangePoVInput = Input.GetKeyDown(KeyCode.Q);
+        if (isPressChangePoVInput)
         {
+            OnChangePoV();
             Debug.Log("Mengubah perspektif kamera");
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -45,7 +46,11 @@ public class PlayerMovement : MonoBehaviour
 
     // ====================== camera
     [SerializeField]
-    private Transform _cameraTransform;
+    private Transform _cameraTransformTPS;
+    [SerializeField]
+    private Transform _cameraTransformFPS;
+    [SerializeField]
+    private CameraManager _cameraManager;
 
     // ====================== movements
     [SerializeField]
@@ -108,13 +113,30 @@ public class PlayerMovement : MonoBehaviour
 
         if (isPlayerStanding)
         {
-            if (axisDirection.magnitude >= 0.1)
+            switch (_cameraManager.CameraState)
             {
-                float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg +_cameraTransform.eulerAngles.y;
-                float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
-                transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
-                movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
-                _rigidbody.AddForce(movementDirection * Time.deltaTime * _speed);
+                case CameraState.ThirdPerson:
+                    if (axisDirection.magnitude >= 0.1)
+                    {
+                        // Debug.Log("This is Third Person Camera");
+                        float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransformTPS.eulerAngles.y;
+
+                        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
+                        transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
+                        movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
+                        _rigidbody.AddForce(movementDirection * Time.deltaTime * _speed);
+                    }
+                    break;
+                case CameraState.FirstPerson:
+                    // Debug.Log("This is First Person Camera");
+                    transform.rotation = Quaternion.Euler(0f, _cameraTransformFPS.eulerAngles.y, 0f);
+                    Vector3 verticalDirection = axisDirection.y * transform.forward;
+                    Vector3 horizontalDirection = axisDirection.x * transform.right;
+                    movementDirection = verticalDirection + horizontalDirection;
+                    _rigidbody.AddForce(movementDirection * Time.deltaTime * _speed);
+                    break;
+                default:
+                    break;
             }
         }
         else if (isPlayerClimbing)
@@ -193,6 +215,8 @@ public class PlayerMovement : MonoBehaviour
             transform.position = hit.point - offset;
             _playerStance = PlayerStance.Climb;
             _rigidbody.useGravity = false;
+            _speed = _climbSpeed;
+            _cameraManager.SetFPSClampedCamera(true, transform.rotation.eulerAngles);
         }
     }
     
@@ -202,7 +226,9 @@ public class PlayerMovement : MonoBehaviour
         {
             _playerStance = PlayerStance.Stand;
             _rigidbody.useGravity = true;
-            transform.position -= transform.forward * 1f;
+            transform.position -= transform.forward;
+            _speed = _walkSpeed;
+            _cameraManager.SetFPSClampedCamera(false, transform.rotation.eulerAngles);
         }
     }
 
