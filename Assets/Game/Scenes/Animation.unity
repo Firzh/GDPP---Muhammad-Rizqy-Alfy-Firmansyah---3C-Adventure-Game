@@ -6028,6 +6028,7 @@ GameObject:
   - component: {fileID: 1225374060}
   - component: {fileID: 1225374058}
   - component: {fileID: 1225374059}
+  - component: {fileID: 1225374062}
   - component: {fileID: 1225374056}
   - component: {fileID: 1225374057}
   m_Layer: 0
@@ -6143,7 +6144,7 @@ MonoBehaviour:
   PanAxis:
     Value: 0.05
     Center: 0.05
-    Range: {x: -5, y: 5}
+    Range: {x: -90, y: 90}
     Wrap: 0
     Recentering:
       Enabled: 0
@@ -6218,6 +6219,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1225374062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225374055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: 8608ec81ee27a15488d33f9dad239e91, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 1
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1243858099
 GameObject:
   m_ObjectHideFlags: 0
@@ -9626,7 +9644,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1972373459}
-  - component: {fileID: 1972373460}
   m_Layer: 0
   m_Name: PlayerFPSPos
   m_TagString: Untagged
@@ -9649,26 +9666,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 11749024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1818360609 &1972373460
-RotationConstraint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972373458}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Weight: 1
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_RotationOffset: {x: 0, y: 0, z: 0}
-  m_AffectRotationX: 0
-  m_AffectRotationY: 1
-  m_AffectRotationZ: 0
-  m_Active: 1
-  m_IsLocked: 1
-  m_Sources:
-  - sourceTransform: {fileID: 1972373459}
-    weight: 1
 --- !u!1 &1978784561
 GameObject:
   m_ObjectHideFlags: 0

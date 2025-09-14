@@ -51,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
     private Transform _cameraTransformFPS;
     [SerializeField]
     private CameraManager _cameraManager;
+    // public Action OnChangePerspective;
 
     // ====================== movements
     [SerializeField]
@@ -78,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput += Jump;
         _input.OnClimbInput += StartClimb;
         _input.OnCancelClimb += CancelClimb;
+        _cameraManager.OnChangePerspective += ChangePerspective;
     }
 
     private void Update()
@@ -105,6 +107,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput -= Jump;
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimb -= CancelClimb;
+        _cameraManager.OnChangePerspective -= ChangePerspective;
     }
 
     private void Move(Vector2 axisDirection)
@@ -122,8 +125,8 @@ public class PlayerMovement : MonoBehaviour
                     {
                         // Debug.Log("This is Third Person Camera");
                         float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransformTPS.eulerAngles.y;
-
                         float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
+
                         transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
                         movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
                         _rigidbody.AddForce(movementDirection * Time.deltaTime * _speed);
@@ -131,11 +134,22 @@ public class PlayerMovement : MonoBehaviour
                     break;
                 case CameraState.FirstPerson:
                     // Debug.Log("This is First Person Camera");
-                    
-                    transform.rotation = Quaternion.Euler(0f, _cameraTransformFPS.eulerAngles.y, 0f);
-                    Vector3 verticalDirection = axisDirection.y * transform.forward;
+                    float FPSRotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransformFPS.eulerAngles.y;
+                    float FPSSmoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, FPSRotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
+                    // Bug saat backwards karena rotasi kamera FPS mengikuti rotasi karakter. 
+                    // Teruji bisa backwards normal jika kamera menghadap belakang (kepala karakter) yang mana ga mungkin di FPS wkwk
+
+                    // Saat mundur, jangan update rotasi (lock rotasi ke yang terakhir)
+                    if (axisDirection.y >= 0)
+                    {
+                        transform.rotation = Quaternion.Euler(0f, FPSSmoothAngle, 0f);
+                    }
+
+                    // Hitung arah gerakan relatif karakter
+                        Vector3 verticalDirection = axisDirection.y * transform.forward;
                     Vector3 horizontalDirection = axisDirection.x * transform.right;
                     movementDirection = verticalDirection + horizontalDirection;
+
                     _rigidbody.AddForce(movementDirection * Time.deltaTime * _speed);
                     break;
                 default:
@@ -143,6 +157,9 @@ public class PlayerMovement : MonoBehaviour
             }
             Vector3 velocity = new Vector3(_rigidbody.linearVelocity.x, 0, _rigidbody.linearVelocity.z);
             _animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude);
+
+            _animator.SetFloat("VelocityZ", velocity.magnitude * axisDirection.y);
+            _animator.SetFloat("VelocityX", velocity.magnitude * axisDirection.x);
         }
         else if (isPlayerClimbing)
         {
@@ -225,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
             _cameraManager.SetTPSFieldOfView(70);
         }
     }
-    
+
     private void CancelClimb()
     {
         if (_playerStance == PlayerStance.Climb)
@@ -239,4 +256,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void ChangePerspective()
+    {
+        // OnChangePerspective();
+        _animator.SetTrigger("ChangePerspective");
+    }
 }
