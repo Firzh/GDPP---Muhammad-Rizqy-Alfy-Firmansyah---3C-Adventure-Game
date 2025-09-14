@@ -217,6 +217,7 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.useGravity = false;
             _speed = _climbSpeed;
             _cameraManager.SetFPSClampedCamera(true, transform.rotation.eulerAngles);
+            _cameraManager.SetTPSFieldOfView(70);
         }
     }
     
@@ -229,6 +230,7 @@ public class PlayerMovement : MonoBehaviour
             transform.position -= transform.forward;
             _speed = _walkSpeed;
             _cameraManager.SetFPSClampedCamera(false, transform.rotation.eulerAngles);
+            _cameraManager.SetTPSFieldOfView(40);
         }
     }
 

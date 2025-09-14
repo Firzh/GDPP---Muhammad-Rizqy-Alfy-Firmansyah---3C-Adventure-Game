@@ -19,6 +19,11 @@ public class CameraManager : MonoBehaviour
         _inputManager.OnChangePoV += SwitchCamera;
     }
 
+    public void SetTPSFieldOfView(float fieldOfView)
+    {
+        _tpsCamera.Lens.FieldOfView = fieldOfView;
+    }
+
     public void SetFPSClampedCamera(bool isClamped, Vector3 playerRotation)
     {
         // In Cinemachine 3, use the new Camera component
@@ -28,10 +33,10 @@ public class CameraManager : MonoBehaviour
         {
             pov.PanAxis.Wrap = false;
             // Membuat Vector3 baru dengan mengurangi komponen x dari playerRotation dengan 45
-            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - 5, playerRotation.z);
+            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - 15, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMin.y;
 
-            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + 5, playerRotation.z);
+            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + 15, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMax.y;
         }
         else
