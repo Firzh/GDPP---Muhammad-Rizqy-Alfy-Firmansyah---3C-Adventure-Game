@@ -1,8 +1,11 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using System;
 
 public class CameraManager : MonoBehaviour
 {
+
+    public Action OnChangePerspective;
     [SerializeField]
     public CameraState CameraState;
     [SerializeField]
@@ -13,11 +16,20 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField]
     private InputManager _inputManager;
+    // [SerializeField]
+    // private PlayerMovement _playerMovement;
+
 
     public void Start()
     {
         _inputManager.OnChangePoV += SwitchCamera;
+        // _playerMovement.OnChangePerspective += SwitchCamera;
     }
+
+    // public void OnDestroy()
+    // {
+    //     _playerMovement.OnChangePerspective -= SwitchCamera;
+    // }
 
     public void SetTPSFieldOfView(float fieldOfView)
     {
@@ -33,10 +45,12 @@ public class CameraManager : MonoBehaviour
         {
             pov.PanAxis.Wrap = false;
             // Membuat Vector3 baru dengan mengurangi komponen x dari playerRotation dengan 45
-            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - 15, playerRotation.z);
+            // float minAngle = -0.05f;
+            // float maxAngle = 0.05f;
+            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - 90, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMin.y;
 
-            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + 15, playerRotation.z);
+            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + 90, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMax.y;
         }
         else
@@ -50,6 +64,7 @@ public class CameraManager : MonoBehaviour
 
     private void SwitchCamera()
     {
+        OnChangePerspective();
         if (CameraState == CameraState.ThirdPerson)
         {
             CameraState = CameraState.FirstPerson;
