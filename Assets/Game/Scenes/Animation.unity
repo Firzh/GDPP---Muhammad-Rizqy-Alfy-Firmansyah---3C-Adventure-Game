@@ -250,6 +250,11 @@ MonoBehaviour:
   _standCamY: 1.7
   _crouchCamY: 1.2
   _camY_LerpSpeed: 12
+  _glideSpeed: 70
+  _airDrag: 5
+  _glideRotationSpeed: {x: 20, y: 40, z: 20}
+  _minGlideRotationX: -10
+  _maxGlideRotationX: 14
   _rotationSmoothTime: 0.1
 --- !u!95 &11749028
 Animator:

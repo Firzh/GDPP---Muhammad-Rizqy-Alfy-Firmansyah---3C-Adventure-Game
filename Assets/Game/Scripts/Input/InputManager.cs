@@ -12,6 +12,8 @@ public class InputManager : MonoBehaviour
     public Action OnCancelClimb;
     public Action OnChangePoV;
     public Action OnCrouchInput;
+    public Action OnGlideInput;
+    public Action OnCancelGlide;
 
     private void Update()
     {
@@ -92,7 +94,7 @@ public class InputManager : MonoBehaviour
         if (isPressCrouchInput)
         {
             OnCrouchInput();
-            Debug.Log("Jongkok");
+            // Debug.Log("Jongkok");
         }
     }
     
@@ -121,7 +123,11 @@ public class InputManager : MonoBehaviour
         bool isPressGlide = Input.GetKeyDown(KeyCode.G);
         if (isPressGlide)
         {
-            Debug.Log("Meluncur");
+            if (OnGlideInput != null)
+            {
+                OnGlideInput();
+                Debug.Log("Meluncur");
+            }
         }
     }
 
@@ -131,7 +137,12 @@ public class InputManager : MonoBehaviour
         if (isPressCancelInput)
         {
             OnCancelClimb();
-            // Debug.Log("Membatalkan aksi");
+            // Debug.Log("Membatalkan Climb");
+        }
+        else if (OnCancelGlide != null && isPressCancelInput)
+        {
+            OnCancelGlide();
+            Debug.Log("Membatalkan Glide");
         }
     }
 
