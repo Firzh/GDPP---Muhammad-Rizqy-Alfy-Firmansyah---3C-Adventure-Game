@@ -242,7 +242,7 @@ MonoBehaviour:
   _climbableLayer:
     serializedVersion: 2
     m_Bits: 64
-  _climbSpeed: 60
+  _climbSpeed: 20
   _cameraTransformTPS: {fileID: 854438711}
   _cameraTransformFPS: {fileID: 1225374061}
   _cameraManager: {fileID: 563026030}

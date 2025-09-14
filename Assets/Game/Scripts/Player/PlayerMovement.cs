@@ -117,13 +117,24 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateFpsAnchorHeight()
     {
         if (_playerFpsPos == null) return;
+        
         Vector3 p = _playerFpsPos.localPosition;
+        // Update Y position based on target cam height
         p.y = Mathf.Lerp(p.y, _targetCamY, _camY_LerpSpeed * Time.deltaTime);
-        _playerFpsPos.localPosition = p;
 
-        // opsional: jika kamera bukan child anchor, sinkronkan pos kamera ke anchor
-        // _cameraTransformFPS.localPosition = _playerFpsPos.localPosition;
+        // Modify Z based on the crouch state
+        if (_playerStance == PlayerStance.Crouch)
+        {
+            p.z = 0.5f; // Crouch Z position
+        }
+        else
+        {
+            p.z = 0.3f; // Non-crouch Z position
+        }
+
+        _playerFpsPos.localPosition = p;
     }
+
 
     private void HideAndLockCursor()
     {
@@ -206,6 +217,10 @@ public class PlayerMovement : MonoBehaviour
             Vector3 vertical = axisDirection.y * transform.up;
             movementDirection = horizontal + vertical;
             _rigidbody.AddForce(movementDirection * Time.deltaTime * _climbSpeed);
+            _rigidbody.AddForce(movementDirection * Time.deltaTime * _climbSpeed);
+            Vector3 velocity = new Vector3(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y, 0);
+            _animator.SetFloat("ClimbVelocityY", velocity.magnitude * axisDirection.y);
+            _animator.SetFloat("ClimbVelocityX", velocity.magnitude * axisDirection.x);
         }
     }
 
@@ -274,6 +289,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isInFrontOfClimbingWall && _isGrounded && isNotClimbing)
         {
+            _collider.center = Vector3.up * 1.4f; 
             Vector3 offset = (transform.forward * _climbOffset.z) + (Vector3.up * _climbOffset.y);
             transform.position = hit.point - offset;
             _playerStance = PlayerStance.Climb;
@@ -281,6 +297,7 @@ public class PlayerMovement : MonoBehaviour
             _speed = _climbSpeed;
             _cameraManager.SetFPSClampedCamera(true, transform.rotation.eulerAngles);
             _cameraManager.SetTPSFieldOfView(70);
+            _animator.SetBool("IsClimbing", true);
         }
     }
 
@@ -288,12 +305,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_playerStance == PlayerStance.Climb)
         {
+            _collider.center = Vector3.up * 0.9f; 
             _playerStance = PlayerStance.Stand;
             _rigidbody.useGravity = true;
             transform.position -= transform.forward;
             _speed = _walkSpeed;
             _cameraManager.SetFPSClampedCamera(false, transform.rotation.eulerAngles);
             _cameraManager.SetTPSFieldOfView(40);
+            _animator.SetBool("IsClimbing", false);
         }
     }
 
