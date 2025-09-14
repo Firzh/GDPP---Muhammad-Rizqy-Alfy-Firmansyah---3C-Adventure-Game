@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     private float _walkSpeed;
     [SerializeField]
     private float _sprintSpeed;
+    [SerializeField]
+    private float _crouchSpeed;
     [SerializeField]
     private float _walkSprintTransition;
     [SerializeField]
@@ -53,6 +56,17 @@ public class PlayerMovement : MonoBehaviour
     private CameraManager _cameraManager;
     // public Action OnChangePerspective;
 
+    // ====================== crouch
+    [SerializeField]
+    private Transform _playerFpsPos; // drag: PlayerFPSPos
+    [SerializeField]
+    private float _standCamY = 1.7f;
+    [SerializeField]
+    private float _crouchCamY = 1.2f;
+    [SerializeField] 
+    private float _camY_LerpSpeed = 12f;
+    private float _targetCamY;
+
     // ====================== movements
     [SerializeField]
     private float _rotationSmoothTime = 0.1f;
@@ -60,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
     private PlayerStance _playerStance;
     private Animator _animator;
+    private CapsuleCollider _collider;
 
     private Rigidbody _rigidbody;
 
@@ -67,8 +82,17 @@ public class PlayerMovement : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+        _collider = GetComponent<CapsuleCollider>();
         _speed = _walkSpeed;
         _playerStance = PlayerStance.Stand;
+
+        _targetCamY = _standCamY;
+        if (_playerFpsPos != null)
+        {
+            var p = _playerFpsPos.localPosition;
+            p.y = _targetCamY;
+            _playerFpsPos.localPosition = p;
+        }
         HideAndLockCursor();
     }
 
@@ -79,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput += Jump;
         _input.OnClimbInput += StartClimb;
         _input.OnCancelClimb += CancelClimb;
+        _input.OnCrouchInput += Crouch;
         _cameraManager.OnChangePerspective += ChangePerspective;
     }
 
@@ -86,6 +111,18 @@ public class PlayerMovement : MonoBehaviour
     {
         CheckIsGrounded();
         CheckStep();
+        UpdateFpsAnchorHeight();
+    }
+
+    private void UpdateFpsAnchorHeight()
+    {
+        if (_playerFpsPos == null) return;
+        Vector3 p = _playerFpsPos.localPosition;
+        p.y = Mathf.Lerp(p.y, _targetCamY, _camY_LerpSpeed * Time.deltaTime);
+        _playerFpsPos.localPosition = p;
+
+        // opsional: jika kamera bukan child anchor, sinkronkan pos kamera ke anchor
+        // _cameraTransformFPS.localPosition = _playerFpsPos.localPosition;
     }
 
     private void HideAndLockCursor()
@@ -107,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput -= Jump;
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimb -= CancelClimb;
+        _input.OnCrouchInput -= Crouch;
         _cameraManager.OnChangePerspective -= ChangePerspective;
     }
 
@@ -115,8 +153,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementDirection = Vector3.zero;
         bool isPlayerStanding = _playerStance == PlayerStance.Stand;
         bool isPlayerClimbing = _playerStance == PlayerStance.Climb;
+        bool isPlayerCrouch = _playerStance == PlayerStance.Crouch;
 
-        if (isPlayerStanding)
+        if (isPlayerStanding || isPlayerCrouch)
         {
             switch (_cameraManager.CameraState)
             {
@@ -146,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
                     }
 
                     // Hitung arah gerakan relatif karakter
-                        Vector3 verticalDirection = axisDirection.y * transform.forward;
+                    Vector3 verticalDirection = axisDirection.y * transform.forward;
                     Vector3 horizontalDirection = axisDirection.x * transform.right;
                     movementDirection = verticalDirection + horizontalDirection;
 
@@ -262,5 +301,29 @@ public class PlayerMovement : MonoBehaviour
     {
         // OnChangePerspective();
         _animator.SetTrigger("ChangePerspective");
+    }
+
+    private void Crouch()
+    {
+        if (_playerStance == PlayerStance.Stand)
+        {
+            _playerStance = PlayerStance.Crouch;
+            _animator.SetBool("IsCrouch", true);
+            _speed = _crouchSpeed;
+            _collider.height = 1.3f;
+            _collider.center = Vector3.up * 0.66f;
+
+            _targetCamY = _crouchCamY;
+        }
+        else if (_playerStance == PlayerStance.Crouch)
+        {
+            _playerStance = PlayerStance.Stand;
+            _animator.SetBool("IsCrouch", false);
+            _speed = _walkSpeed;
+            _collider.height = 1.8f;
+            _collider.center = Vector3.up * 0.9f;
+
+            _targetCamY = _standCamY;
+        }
     }
 }

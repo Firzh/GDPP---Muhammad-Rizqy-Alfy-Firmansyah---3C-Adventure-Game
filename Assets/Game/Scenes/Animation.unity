@@ -222,8 +222,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50f3da7a830780b4bb9449882c5123fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 350
+  _walkSpeed: 400
   _sprintSpeed: 500
+  _crouchSpeed: 350
   _walkSprintTransition: 20
   _input: {fileID: 2116307808}
   _jumpForce: 50000
@@ -245,6 +246,10 @@ MonoBehaviour:
   _cameraTransformTPS: {fileID: 854438711}
   _cameraTransformFPS: {fileID: 1225374061}
   _cameraManager: {fileID: 563026030}
+  _playerFpsPos: {fileID: 1972373459}
+  _standCamY: 1.7
+  _crouchCamY: 1.2
+  _camY_LerpSpeed: 12
   _rotationSmoothTime: 0.1
 --- !u!95 &11749028
 Animator:
@@ -6213,7 +6218,7 @@ Transform:
   m_GameObject: {fileID: 1225374055}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.00043633234, z: 0, w: 0.99999994}
-  m_LocalPosition: {x: 0, y: 1.7, z: 0.3}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6978,7 +6983,7 @@ Transform:
   m_GameObject: {fileID: 1348457685}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.00043633234, z: 0, w: 0.99999994}
-  m_LocalPosition: {x: 0, y: 1.7, z: 0.3}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9660,7 +9665,7 @@ Transform:
   m_GameObject: {fileID: 1972373458}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.7, z: 0.3}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
