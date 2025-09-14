@@ -1,7 +1,6 @@
 using System;
-using UnityEditor.ShaderGraph.Internal;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -88,6 +87,14 @@ public class PlayerMovement : MonoBehaviour
     private Animator _animator;
     private CapsuleCollider _collider;
 
+    // ====================== punch
+    [SerializeField]
+    private float _resetComboInterval;
+    private Coroutine _resetCombo;
+    private bool _isPunching;
+    private int _combo = 0;
+
+
     private Rigidbody _rigidbody;
 
     private void Awake()
@@ -118,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnCrouchInput += Crouch;
         _input.OnGlideInput += StartGlide;
         _input.OnCancelGlide += CancelGlide;
+        _input.OnPunchInput += Punch;
         _cameraManager.OnChangePerspective += ChangePerspective;
     }
 
@@ -171,8 +179,9 @@ public class PlayerMovement : MonoBehaviour
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimb -= CancelClimb;
         _input.OnCrouchInput -= Crouch;
-        _input.OnGlideInput += StartGlide;
-        _input.OnCancelGlide += CancelGlide;
+        _input.OnGlideInput -= StartGlide;
+        _input.OnCancelGlide -= CancelGlide;
+        _input.OnPunchInput -= Punch;
         _cameraManager.OnChangePerspective -= ChangePerspective;
     }
 
@@ -184,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
         bool isPlayerCrouch = _playerStance == PlayerStance.Crouch;
         bool isPlayerGliding = _playerStance == PlayerStance.Glide;
 
-        if (isPlayerStanding || isPlayerCrouch)
+        if ((isPlayerStanding || isPlayerCrouch) != _isPunching)
         {
             switch (_cameraManager.CameraState)
             {
@@ -247,7 +256,7 @@ public class PlayerMovement : MonoBehaviour
 
             // Apply the changes based on axisDirection and rotation speed
             rotationDegree.x += _glideRotationSpeed.x * axisDirection.y * Time.deltaTime;
-            
+
             // Clamp the x rotation within a specific range
             rotationDegree.x = Mathf.Clamp(rotationDegree.x, _minGlideRotationX, _maxGlideRotationX);
 
@@ -387,7 +396,7 @@ public class PlayerMovement : MonoBehaviour
             _targetCamY = _standCamY;
         }
     }
-    
+
     private void StartGlide()
     {
         if (_playerStance != PlayerStance.Glide && !_isGrounded)
@@ -409,7 +418,7 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.AddForce(totalForce * Time.deltaTime);
         }
     }
-    
+
     private void CancelGlide()
     {
         if (_playerStance == PlayerStance.Glide)
@@ -417,5 +426,44 @@ public class PlayerMovement : MonoBehaviour
             _playerStance = PlayerStance.Stand;
             _animator.SetBool("IsGliding", false);
         }
+    }
+
+    private void Punch()
+    {
+        if (!_isPunching && _playerStance == PlayerStance.Stand)
+        {
+            _isPunching = true;
+            if (_isPunching == true)
+            {
+                Debug.Log("is punching");
+            }
+
+            if (_combo < 3)
+            {
+                _combo = _combo + 1;
+            }
+            else
+            {
+                _combo = 1;
+            }
+            _animator.SetInteger("Combo", _combo);
+            _animator.SetTrigger("Punch");
+        }
+    }
+
+    private void EndPunch()
+    {
+        _isPunching = false;
+        if (_resetCombo != null)
+        {
+            StopCoroutine(_resetCombo);
+        }
+        _resetCombo = StartCoroutine(ResetCombo());
+    }
+    
+    private IEnumerator ResetCombo()
+    {
+        yield return new WaitForSeconds(_resetComboInterval);
+        _combo = 0;
     }
 }

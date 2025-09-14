@@ -256,6 +256,7 @@ MonoBehaviour:
   _minGlideRotationX: -10
   _maxGlideRotationX: 14
   _rotationSmoothTime: 0.1
+  _resetComboInterval: 5
 --- !u!95 &11749028
 Animator:
   serializedVersion: 7

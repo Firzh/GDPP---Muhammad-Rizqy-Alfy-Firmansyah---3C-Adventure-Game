@@ -14,6 +14,7 @@ public class InputManager : MonoBehaviour
     public Action OnCrouchInput;
     public Action OnGlideInput;
     public Action OnCancelGlide;
+    public Action OnPunchInput;
 
     private void Update()
     {
@@ -126,7 +127,7 @@ public class InputManager : MonoBehaviour
             if (OnGlideInput != null)
             {
                 OnGlideInput();
-                Debug.Log("Meluncur");
+                // Debug.Log("Meluncur");
             }
         }
     }
@@ -142,7 +143,7 @@ public class InputManager : MonoBehaviour
         else if (OnCancelGlide != null && isPressCancelInput)
         {
             OnCancelGlide();
-            Debug.Log("Membatalkan Glide");
+            // Debug.Log("Membatalkan Glide");
         }
     }
 
@@ -151,6 +152,7 @@ public class InputManager : MonoBehaviour
         bool isPressPunch = Input.GetMouseButtonDown(0);
         if (isPressPunch)
         {
+            OnPunchInput();
             Debug.Log("Memukul");
         }
     }
