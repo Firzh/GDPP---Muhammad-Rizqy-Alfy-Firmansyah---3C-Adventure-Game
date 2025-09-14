@@ -94,6 +94,16 @@ public class PlayerMovement : MonoBehaviour
     private bool _isPunching;
     private int _combo = 0;
 
+    // ====================== hit & destroy
+    [SerializeField]
+    private Transform _hitDetector;
+
+    [SerializeField]
+    private float _hitDetectorRadius;
+
+    [SerializeField]
+    private LayerMask _hitLayer;
+
 
     private Rigidbody _rigidbody;
 
@@ -460,10 +470,22 @@ public class PlayerMovement : MonoBehaviour
         }
         _resetCombo = StartCoroutine(ResetCombo());
     }
-    
+
     private IEnumerator ResetCombo()
     {
         yield return new WaitForSeconds(_resetComboInterval);
         _combo = 0;
+    }
+
+    private void Hit()
+    {
+        Collider[] hitObjects = Physics.OverlapSphere(_hitDetector.position, _hitDetectorRadius, _hitLayer);
+        for (int i = 0; i < hitObjects.Length; i++)
+        {
+            if (hitObjects[i].gameObject != null)
+            {
+                Destroy(hitObjects[i].gameObject);
+            }
+        }
     }
 }
