@@ -197,12 +197,14 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 jumppDirection = Vector3.up;
             _rigidbody.AddForce(jumppDirection * _jumpForce * Time.deltaTime);
+            _animator.SetTrigger("Jump");
         }
     }
 
     private void CheckIsGrounded()
     {
         _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
+        _animator.SetBool("IsGrounded", _isGrounded);
         // Debug.Log("Player hit the ground");
     }
     private void CheckStep()
