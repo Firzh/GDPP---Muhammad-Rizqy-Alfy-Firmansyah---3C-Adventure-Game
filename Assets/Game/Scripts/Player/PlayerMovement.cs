@@ -58,12 +58,14 @@ public class PlayerMovement : MonoBehaviour
     private float _rotationSmoothVelocity;
     private bool _isGrounded;
     private PlayerStance _playerStance;
+    private Animator _animator;
 
     private Rigidbody _rigidbody;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
         _speed = _walkSpeed;
         _playerStance = PlayerStance.Stand;
         HideAndLockCursor();
@@ -129,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
                     break;
                 case CameraState.FirstPerson:
                     // Debug.Log("This is First Person Camera");
+                    
                     transform.rotation = Quaternion.Euler(0f, _cameraTransformFPS.eulerAngles.y, 0f);
                     Vector3 verticalDirection = axisDirection.y * transform.forward;
                     Vector3 horizontalDirection = axisDirection.x * transform.right;
@@ -138,6 +141,8 @@ public class PlayerMovement : MonoBehaviour
                 default:
                     break;
             }
+            Vector3 velocity = new Vector3(_rigidbody.linearVelocity.x, 0, _rigidbody.linearVelocity.z);
+            _animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude);
         }
         else if (isPlayerClimbing)
         {

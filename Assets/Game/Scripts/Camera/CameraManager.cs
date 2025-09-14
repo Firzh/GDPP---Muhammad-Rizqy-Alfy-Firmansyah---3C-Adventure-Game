@@ -33,10 +33,12 @@ public class CameraManager : MonoBehaviour
         {
             pov.PanAxis.Wrap = false;
             // Membuat Vector3 baru dengan mengurangi komponen x dari playerRotation dengan 45
-            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - 15, playerRotation.z);
+            float minAngle = -0.05f;
+            float maxAngle = 0.05f;
+            Vector3 RotasiAdjustMin = new Vector3(playerRotation.x, playerRotation.y - minAngle, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMin.y;
 
-            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + 15, playerRotation.z);
+            Vector3 RotasiAdjustMax = new Vector3(playerRotation.x, playerRotation.y + maxAngle, playerRotation.z);
             pov.PanAxis.Range.y = RotasiAdjustMax.y;
         }
         else
